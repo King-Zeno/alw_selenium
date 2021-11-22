@@ -1,11 +1,21 @@
 import time
+from ddt import ddt, data, unpack
 from time import sleep
+import xlrd, unittest
 import yaml
 import selenium
 import pytesseract
 from PIL import Image
 from selenium import webdriver
 from demo1.image_verify import VerificationCode
+
+def get_data(file_name):
+    rows = []
+    book = xlrd.open_workbook(file_name)
+    sheet = book.sheet_by_index(0)
+    for row_idx in range(1, sheet.nrows):
+        rows.append(list(sheet.row_values(row_idx, 0, sheet.ncols)))
+    return rows
 
 class Test_selenium():
     def setup(self):
@@ -20,82 +30,37 @@ class Test_selenium():
     def teardown(self):
         self.driver.quit()
 
-    #登录门店管理平台
+    #登录商品库管理平台
     def test_alw_login(self):
         Browser = self.driver
-        URL= "http://store.test.alwooo.com:8338"
+        URL= "http://mms.test.anlewo.com:8377/"
         Browser.get(URL)
         Browser.maximize_window()
         image_str = VerificationCode.image_str
 
-        element_name = Browser.find_element_by_id('usertable-mobile')
-        element_pswd = Browser.find_element_by_id('usertable-password')
-        element_verf = Browser.find_element_by_id('usertable-verifycode')
-        Browser.find_element_by_id('checkbox').click()
-        verify_code1 = image_str(VerificationCode(), self.get_pictures())
-        element_name.send_keys('15898765432')
+        element_name = Browser.find_element_by_xpath('/html/body/div/div/div[1]/form/div[1]/div/div/input')
+        element_pswd = Browser.find_element_by_xpath('/html/body/div/div/div[1]/form/div[2]/div/div/input')
+        element_name.send_keys('13800138000')
         element_pswd.send_keys('alw_2016')
-        element_verf.send_keys(verify_code1)
 
         sleep(3)
-        Browser.find_element_by_xpath('//*[@id="login"]/div[4]/div[2]/button').click()
+        Browser.find_element_by_xpath('/html/body/div/div/div[1]/form/button').click()
         sleep(3)
         #111
 
-    def get_pictures(self):
-        self.driver.save_screenshot('pictures.png')  # 全屏截图
-        page_snap_obj = Image.open('pictures.png')
-        img = self.find_element('#usertable-verifycode-image')  # 验证码元素位置
-        time.sleep(1)
-        location = img.location
-        size = img.size  # 获取验证码的大小参数
-        left = location['x']
-        top = location['y']
-        right = left + size['width']
-        bottom = top + size['height']
-        image_obj = page_snap_obj.crop((left, top, right, bottom))  # 按照验证码的长宽，切割验证码
-        #image_obj.show()  # 打开切割后的完整验证码
-        #self.driver.close()  # 处理完验证码后关闭浏览器
-        return image_obj
+    # def test_getdata(self):
+    #     print(get_data('goods_data.xlsx'))
 
-class login_collect():
+    @data(*get_data('goods_data.xlsx'))
+    @unpack
+    def test_add_goods(self, goods_classes, manage_class, release_class,goods_id,
+                       sku_id, brand, conpany_version, alw_version, effect_product,
+                       length, width, thickness, sku_goods_params, sale_box_rules, sale_rule,
+                       purchase_box_rules, purchase_rule, goods_name, goods_class, if_sampling,
+                       if_collection, if_sales_alone, if_recommend, if_is_parts, if_division_batch,
+                       c_platform, b_platform, inside_platform, sample_platform, status, delivery_dates,
+                       if_retail, min_buy_num, min_buy_unit, upload_time, move_time):
+        pass
 
-    def test_alw_login(self):
-        Browser = self.driver
-        URL= "http://store.test.alwooo.com:8338"
-        Browser.get(URL)
-        Browser.maximize_window()
-        image_str = VerificationCode.image_str
-
-        element_name = Browser.find_element_by_id('usertable-mobile')
-        element_pswd = Browser.find_element_by_id('usertable-password')
-        element_verf = Browser.find_element_by_id('usertable-verifycode')
-        Browser.find_element_by_id('checkbox').click()
-        verify_code1 = image_str(VerificationCode(), self.get_pictures())
-        element_name.send_keys('15898765432')
-        element_pswd.send_keys('alw_2016')
-        element_verf.send_keys(verify_code1)
-
-        sleep(3)
-        Browser.find_element_by_xpath('//*[@id="login"]/div[4]/div[2]/button').click()
-        sleep(3)
-    #需要门店先登录
-    def test_ipad_login(self):
-        Browser = self.driver
-        URL= "http://store.test.alwooo.com:8338/Dev/index/index"
-        Browser.get(URL)
-        Browser.maximize_window()
-        #image_str = VerificationCode.image_str
-
-        element_name = Browser.find_element_by_id('usertable-mobile')
-        element_pswd = Browser.find_element_by_id('usertable-password')
-        element_verf = Browser.find_element_by_id('usertable-verifycode')
-        Browser.find_element_by_id('checkbox').click()
-        #verify_code1 = image_str(VerificationCode(), self.get_pictures())
-        element_name.send_keys('15898765432')
-        element_pswd.send_keys('alw_2016')
-        #element_verf.send_keys(verify_code1)
-
-        sleep(3)
-        Browser.find_element_by_xpath('//*[@id="login"]/div[4]/div[2]/button').click()
-        sleep(3)
+if __name__ == '__main__':
+   pass
