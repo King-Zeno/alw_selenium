@@ -1,13 +1,10 @@
 import time
-from ddt import ddt, data, unpack
+import pytest
 from time import sleep
 import xlrd, unittest
 import yaml
 import selenium
-import pytesseract
-from PIL import Image
 from selenium import webdriver
-from demo1.image_verify import VerificationCode
 
 def get_data(file_name):
     rows = []
@@ -15,7 +12,9 @@ def get_data(file_name):
     sheet = book.sheet_by_index(0)
     for row_idx in range(1, sheet.nrows):
         rows.append(list(sheet.row_values(row_idx, 0, sheet.ncols)))
+    print(rows)
     return rows
+
 
 class Test_selenium():
     def setup(self):
@@ -36,7 +35,6 @@ class Test_selenium():
         URL= "http://mms.test.anlewo.com:8377/"
         Browser.get(URL)
         Browser.maximize_window()
-        image_str = VerificationCode.image_str
 
         element_name = Browser.find_element_by_xpath('/html/body/div/div/div[1]/form/div[1]/div/div/input')
         element_pswd = Browser.find_element_by_xpath('/html/body/div/div/div[1]/form/div[2]/div/div/input')
@@ -50,17 +48,49 @@ class Test_selenium():
 
     # def test_getdata(self):
     #     print(get_data('goods_data.xlsx'))
+    value = get_data('goods_data.xlsx')
+    @pytest.mark.parametrize('data', value)
+    def test_add_goods(self, data):
+        goods_classes = data[0]
+        manage_class = data[1]
+        release_class = data[2]
+        goods_id = data[3]
+        sku_id = data[4]
+        brand = data[5]
+        conpany_version = data[6]
+        alw_version = data[7]
+        effect_product = data[8]
+        length = data[9]
+        width = data[10]
+        thickness = data[11]
+        sku_goods_params = data[12]
+        sale_box_rules = data[13]
+        sale_rule = data[14]
+        purchase_box_rules = data[15]
+        purchase_rule = data[16]
+        goods_name = data[17]
+        goods_class = data[18]
+        if_sampling = data[19]
+        if_collection = data[20]
+        if_sales_alone = data[21]
+        if_recommend = data[22]
+        if_is_parts = data[23]
+        if_division_batch = data[24]
+        c_platform = data[25]
+        b_platform = data[26]
+        inside_platform = data[27]
+        sample_platform	 = data[28]
+        status = data[29]
+        delivery_dates = data[30]
+        if_retail = data[31]
+        min_buy_num	  = data[32]
+        min_buy_unit = data[33]
+        first_upload_time  = data[34]
+        upload_time = data[35]
+        move_time = data[36]
 
-    @data(*get_data('goods_data.xlsx'))
-    @unpack
-    def test_add_goods(self, goods_classes, manage_class, release_class,goods_id,
-                       sku_id, brand, conpany_version, alw_version, effect_product,
-                       length, width, thickness, sku_goods_params, sale_box_rules, sale_rule,
-                       purchase_box_rules, purchase_rule, goods_name, goods_class, if_sampling,
-                       if_collection, if_sales_alone, if_recommend, if_is_parts, if_division_batch,
-                       c_platform, b_platform, inside_platform, sample_platform, status, delivery_dates,
-                       if_retail, min_buy_num, min_buy_unit, upload_time, move_time):
-        pass
+        assert data[0] == '普通商品'
 
 if __name__ == '__main__':
    pass
+
