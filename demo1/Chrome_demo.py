@@ -9,7 +9,7 @@ from selenium import webdriver
 def get_data(file_name):
     rows = []
     book = xlrd.open_workbook(file_name)
-    sheet = book.sheet_by_index(0)
+    sheet = book.sheet_by_index(1)
     for row_idx in range(1, sheet.nrows):
         rows.append(list(sheet.row_values(row_idx, 0, sheet.ncols)))
     print(rows)
@@ -28,22 +28,6 @@ class Test_selenium():
 
     def teardown(self):
         self.driver.quit()
-
-    #登录商品库管理平台
-    def test_alw_login(self):
-        Browser = self.driver
-        URL= "http://mms.test.anlewo.com:8377/"
-        Browser.get(URL)
-        Browser.maximize_window()
-
-        element_name = Browser.find_element_by_xpath('/html/body/div/div/div[1]/form/div[1]/div/div/input')
-        element_pswd = Browser.find_element_by_xpath('/html/body/div/div/div[1]/form/div[2]/div/div/input')
-        element_name.send_keys('13800138000')
-        element_pswd.send_keys('alw_2016')
-
-        sleep(3)
-        Browser.find_element_by_xpath('/html/body/div/div/div[1]/form/button').click()
-        sleep(3)
         #111
 
     # def test_getdata(self):
@@ -89,7 +73,45 @@ class Test_selenium():
         upload_time = data[35]
         move_time = data[36]
 
-        assert data[0] == '普通商品'
+        # 登录商品库管理平台
+        Browser = self.driver
+        URL = "http://mms.test.anlewo.com:8377/"
+        Browser.get(URL)
+        Browser.maximize_window()
+
+        element_name = Browser.find_element_by_xpath('/html/body/div/div/div[1]/form/div[1]/div/div/input')
+        element_pswd = Browser.find_element_by_xpath('/html/body/div/div/div[1]/form/div[2]/div/div/input')
+        element_name.send_keys('13800138000')
+        element_pswd.send_keys('alw_2016')
+
+        sleep(3)
+        Browser.find_element_by_xpath('/html/body/div/div/div[1]/form/button').click()
+        sleep(3)
+
+        create_goods = Browser.find_element_by_xpath('/html/body/div[1]/div[2]/div/div/div/div/div[2]/div[1]/div[2]/div[1]/div/div/button[1]/span')
+        create_goods.click()
+        if goods_classes == '普通商品':
+            Browser.find_element_by_xpath('/html/body/div[2]/div[2]/div/div/div[2]/form/div[1]/div/div/div[1]/div/span').click()
+            sleep(1)
+            Browser.find_element_by_xpath('/html/body/div[2]/div[2]/div/div/div[2]/form/div[1]/div/div/div[2]/ul[2]/li[1]').click()
+            sleep(1)
+            if manage_class == '地砖':
+                Browser.find_element_by_xpath('/html/body/div[2]/div[2]/div/div/div[2]/form/div[2]/div/div/div[1]/div[1]/input').click()
+                sleep(1)
+                Browser.find_element_by_xpath('/html/body/div[2]/div[2]/div/div/div[2]/form/div[2]/div/div/div[2]/div/span/ul/li[1]').click()
+                sleep(1)
+                Browser.find_element_by_xpath('/html/body/div[2]/div[2]/div/div/div[2]/form/div[2]/div/div/div[2]/div/span/span/ul/li[1]').click()
+                sleep(1)
+                element_tile = Browser.find_element_by_xpath('/html/body/div[2]/div[2]/div/div/div[2]/form/div[2]/div/div/div[2]/div/span/span/span/ul/li[1]')
+                element_tile.click()
+                sleep(1)
+                if brand == '东鹏瓷砖':
+                    Browser.find_element_by_xpath('/html/body/div[2]/div[2]/div/div/div[2]/form/div[3]/div/div/div[1]/div/span').click()
+                    sleep(1)
+                    Browser.find_element_by_xpath('/html/body/div[2]/div[2]/div/div/div[2]/form/div[3]/div/div/div[2]/ul[2]/li[31]').click()
+                    sleep(1)
+                    Browser.find_element_by_xpath('/html/body/div[2]/div[2]/div/div/div[3]/div/button[2]').click()
+                    sleep(3)
 
 if __name__ == '__main__':
    pass
