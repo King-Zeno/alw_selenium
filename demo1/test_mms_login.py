@@ -1,7 +1,17 @@
 from time import sleep
 from poium import Page, Element, Elements
 from poium import Browser
+import xlrd,pytest
 from selenium import webdriver
+
+def get_data(file_name):
+    rows = []
+    book = xlrd.open_workbook(file_name)
+    sheet = book.sheet_by_index(1)
+    for row_idx in range(1, sheet.nrows):
+        rows.append(list(sheet.row_values(row_idx, 0, sheet.ncols)))
+    print(rows)
+    return rows
 
 # page层定义
 class loginPage(Page):
@@ -60,25 +70,65 @@ class loginPage(Page):
 
 
 
+value = get_data('goods_data.xlsx')
+@pytest.mark.parametrize('data', value)
+def test_login(data):
+    goods_classes = data[0]
+    manage_class = data[1]
+    release_class = data[2]
+    goods_id = data[3]
+    sku_id = data[4]
+    brand = data[5]
+    conpany_version = data[6]
+    alw_version = data[7]
+    effect_product = data[8]
+    length = data[9]
+    width = data[10]
+    thickness = data[11]
+    sku_goods_params = data[12]
+    sale_box_rules = data[13]
+    sale_rule = data[14]
+    purchase_box_rules = data[15]
+    purchase_rule = data[16]
+    goods_name = data[17]
+    goods_class = data[18]
+    if_sampling = data[19]
+    if_collection = data[20]
+    if_sales_alone = data[21]
+    if_recommend = data[22]
+    if_is_parts = data[23]
+    if_division_batch = data[24]
+    c_platform = data[25]
+    b_platform = data[26]
+    inside_platform = data[27]
+    sample_platform = data[28]
+    status = data[29]
+    delivery_dates = data[30]
+    if_retail = data[31]
+    min_buy_num = data[32]
+    min_buy_unit = data[33]
+    first_upload_time = data[34]
+    upload_time = data[35]
+    move_time = data[36]
 
-dr = webdriver.Chrome(r'D:\Work\QA\selenium\webdriver\chromedriver.exe')
-dr.maximize_window()
-login = loginPage(dr)
-login.get("http://mms.test.anlewo.com:8377/")
-login.mobile_number.send_keys("13800138000")
-login.password.send_keys("alw_2016")
-login.login_button.click()
-sleep(2)
-login.create_button.click()
-login.good_classes.click()
-login.normal_goods.click()
-login.manage_classes.click()
-login.build_material.click()
-login.china_tiles.click()
-login.ground_tiles.click()
-login.brand.click()
-login.dongpengcizhuan.click()
-login.nextstep_button1.click()
-sleep(2)
+    dr = webdriver.Chrome(r'D:\Work\QA\selenium\webdriver\chromedriver.exe')
+    dr.maximize_window()
+    login = loginPage(dr)
+    login.get("http://mms.test.anlewo.com:8377/")
+    login.mobile_number.send_keys("13800138000")
+    login.password.send_keys("alw_2016")
+    login.login_button.click()
+    sleep(2)
+    login.create_button.click()
+    login.good_classes.click()
+    login.normal_goods.click()
+    login.manage_classes.click()
+    login.build_material.click()
+    login.china_tiles.click()
+    login.ground_tiles.click()
+    login.brand.click()
+    login.dongpengcizhuan.click()
+    login.nextstep_button1.click()
+    sleep(2)
 
-dr.close()
+    dr.close()
